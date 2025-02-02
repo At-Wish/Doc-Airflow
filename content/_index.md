@@ -13,4 +13,4 @@ Please note this is not Official documentation and prepared as I am exploring th
 
 
 
-#### Install Airflow: [Installation Guide]({{< ref "/apache-airflow/installation" >}})
+#### Install Airflow with PiPy: [Installation Guide]({{< ref "/installation/pipy/" >}})

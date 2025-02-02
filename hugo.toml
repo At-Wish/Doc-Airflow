@@ -1,29 +1,32 @@
-baseURL = 'https://atwish.org/'
+baseURL = 'https://airflow.atwish.org/'
 languageCode = 'en-us'
-title = 'Documentation At Your Wish'
+title = 'Apache Airflow Documentation - At Your Wish'
 theme = ['hugo-theme-relearn-main','hugo-notice']
-
 
 sectionPagesMenu = 'main'
 
-
 [params]
-  Description = "Open source tools documentation written after trying step by step with Youtube videos. Apache Superset documentation. Keycloak documentation. Valkey documentation"
-
+  Description = "Comprehensive Apache Airflow Documentation - As You Wished, At Your Wish."
 
   [[params.themeVariant]]
     identifier = 'zen-light'
 
-  
   [[params.meta]]
-    description = "A place where you will find documentation as you wish it would be!"
+    description = "Learn Apache Airflow with structured documentation, tutorials, and best practices. Your go-to source for mastering workflow automation!"
     Author = "Shantanu Khond"
-    
+    keywords = "Apache Airflow, Airflow Documentation, Workflow Automation, Data Pipelines, DAGs, Task Scheduling"
+    robots = "index, follow"
 
 [markup.goldmark.parser.attribute]
 block = true # default is false
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
 
+[sitemap]
+  changefreq = 'daily'
+  filename = 'sitemap.xml'
+  priority = 0.8
 
 [menu]
   [[menu.shortcuts]]
@@ -47,3 +50,12 @@ block = true # default is false
     name = "<i class='fa-fw fas fa-bullhorn'></i> Privacy Policy"
     url = '/privacy-policy.html'
     weight = 30
+
+[services]
+  [services.googleAnalytics]
+    id = "G-42VH65VMD6"
+
+[privacy]
+  [privacy.googleAnalytics]
+    anonymizeIP = true
+    respectDoNotTrack = true
