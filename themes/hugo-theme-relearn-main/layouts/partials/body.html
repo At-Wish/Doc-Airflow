@@ -1,0 +1,5 @@
+{{- $page := .page }}
+{{- $content := .content }}
+{{- $outputFormat := partial "output-format.hugo" .page }}
+{{- partial "single-article.hugo" (dict "page" $page "content" $content "outputFormat" $outputFormat) }}
+{{- partial "google/analytics.html" . }}
