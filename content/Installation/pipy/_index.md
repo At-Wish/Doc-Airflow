@@ -1,7 +1,7 @@
 +++ 
 archetype = "default" 
 title = "PiPy installation" 
-weight = 3
+weight = 1
 keywords     = "Apache Superset documentation, Apache Superset, Superset, Open source reporting, Shantanu Khond, At wish, Apache kafka installation"
 +++
 
