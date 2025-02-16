@@ -5,15 +5,21 @@ weight = 3
 keywords     = "Apache Kafka documentation, Apache Kafka, Superset, Open source reporting, Shantanu Khond, At wish, Apache superset installation"
 +++
 
+
 # Introduction to Airflow
+
+### What is Airflow?
+Airflow is a free, open-source tool designed to help you automate and manage workflows. It allows you to schedule and monitor tasks that need to run in a specific order, making it easier to manage complex processes.
+
+You can follow this documentation, there are videos published on the same topics with steps. Link to the playlist is here.
+
+{{< youtube "https://www.youtube.com/playlist?list=PLH1gsHiD7Jxj0ZcYp5JFY0hXy-7KNFIGZ" >}}
 
 
 {{< notice warning >}}
 Please note this is not Official documentation and prepared as I am exploring these tools. If you see any issue or any missing content please feel free to correct and create a pull request or you can reach to me on contact@shantanukhond.me. Thank you!
 {{< /notice >}}
 
-### What is Airflow?
-Airflow is a free, open-source tool designed to help you automate and manage workflows. It allows you to schedule and monitor tasks that need to run in a specific order, making it easier to manage complex processes.
 
 ### Why Use Airflow?
 Airflow is great for managing workflows that have multiple steps or dependencies. It's used by companies of all sizes to automate things like data pipelines, machine learning tasks, or even scheduling reminders.
