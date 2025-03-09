@@ -71,3 +71,42 @@ In this tutorial you will find steps to install apache airflow using docker. You
     ```bash
     docker compose up
     ```
+
+
+##### Building docker image with custom providers
+
+###### Video To Follow
+{{< youtube "https://youtu.be/mgVB1qKuMLY" >}}
+
+
+
+* Create a dockerfile in the directory where you want all the files to be placed if you have followed we will stick with `\app\airflow\docker`
+
+    ```bash
+    cd \app\airflow\docker
+    nano Dockerfile
+    ```
+
+* Inside this dockerfile copy following code 
+
+    ```bash
+    FROM apache/airflow:2.10.5
+    USER root
+    RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+            vim \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+    USER airflow
+
+
+    ```
+
+* Lets build the image from dockerfile using `docker build -f dockerfile -t custom-airflow .`
+
+* Now replace the `custom-airflow` airflow in `docker-compose.yml` and start server again with following command
+
+    ```bash
+    docker compose up -d
+    ```
