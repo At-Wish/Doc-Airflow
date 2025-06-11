@@ -1,0 +1,27 @@
+.banner {
+    background-color: #ffcc00; /* Yellow background */
+    color: black;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure the banner is on top of other elements */
+  }
+  
+  .banner p {
+    margin: 0;
+  }
+  
+  /* Add margin to the top of the body to avoid overlap with the navbar */
+  body {
+    padding-top: 50px; /* Adjust this value according to the height of your navbar */
+  }
+  
+
+  .yt-href{
+    color: blue;
+  }
