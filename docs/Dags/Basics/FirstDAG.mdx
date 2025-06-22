@@ -1,0 +1,198 @@
+---
+id: creating-your-first-dag
+title: Creating Your First DAG
+sidebar_label: Creating Your First DAG
+slug: /dags/basics/creating-your-first-dag
+tags: [Apache Airflow, DAG, Basics, Tutorial, Python]
+description: A step-by-step guide to building your very first Apache Airflow DAG, understanding its core components and running it.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Creating Your First Apache Airflow DAG: A "Hello World" Workflow
+
+Welcome back to the "Hello World!" in Airflow dags. We will walk through the essential steps of creating very first Airflow workflow – a simple "Hello World" DAG. 
+
+### What is a DAG in Apache Airflow?
+
+At its core, a **DAG (Directed Acyclic Graph)** is Airflow's representation of a workflow.
+
+* **Directed:** Tasks flow in one specific direction.
+* **Acyclic:** There are no loops; tasks don't run endlessly in a cycle.
+* **Graph:** It's a collection of tasks and the dependencies between them.
+
+Think of a DAG as a blueprint for your automated processes, outlining exactly what needs to happen, in what order, and when.
+
+### Prerequisites
+
+Before we start coding, ensure you have an Apache Airflow environment up and running. If you haven't set one up yet, please refer to our:
+* [Quickstart Guide](/quickstart)
+* [Installation Guide](/installation)
+
+### Your First DAG: Step-by-Step
+
+We'll define a simple DAG that executes three basic `bash` commands sequentially.
+
+#### 1. Create Your DAG File
+
+Navigate to your Airflow's `dags` folder. This is the directory where Airflow's scheduler looks for your workflow definitions. Create a new Python file inside it, for example, `my_first_dag.py`.
+
+```bash
+# Example path
+your_airflow_home/dags/my_first_dag.py
+```
+
+#### 2. Imports
+Every Airflow DAG file starts with necessary imports.
+
+```Python
+
+# my_first_dag.py
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime, timedelta
+```
+
+* DAG: The main class used to instantiate a Directed Acyclic Graph.
+* BashOperator: An operator that allows you to execute bash commands.
+* datetime, timedelta: Used for defining the DAG's start date and schedule.
+
+#### 3. Define Default Arguments
+It's a best practice to define a dictionary of default_args. These arguments will be applied to all tasks within your DAG unless overridden at the task level.
+
+```Python
+
+# ... (previous imports) ...
+
+default_args = {
+    'owner': 'airflow',             # The owner of the DAG
+    'depends_on_past': False,       # Tasks do not depend on past runs
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,      # Do not send email on task failure
+    'email_on_retry': False,        # Do not send email on task retry
+    'retries': 1,                   # Retry task once on failure
+    'retry_delay': timedelta(minutes=5), # Wait 5 minutes before retrying
+}
+```
+
+
+#### 4. Instantiate Your DAG
+Now, we create the DAG object itself using a with statement.
+
+```Python
+# ... (previous imports and default_args) ...
+
+with DAG(
+    dag_id='my_first_airflow_dag',                 # Unique ID for the DAG
+    start_date=datetime(2023, 1, 1),             # The date from which the DAG starts running
+    schedule_interval=timedelta(days=1),         # How often the DAG runs (e.g., daily)
+    catchup=False,                               # Prevent backfilling for past missed schedules
+    default_args=default_args,                   # Apply the default arguments
+    tags=['hello_world', 'learning'],            # Tags for easy filtering in the UI
+    description='A simple DAG to say hello and print date.' # DAG description
+) as dag:
+    # Tasks will be defined here
+
+```
+
+* dag_id: A unique identifier for your DAG. Choose something descriptive!
+* start_date: The date from which Airflow begins to schedule your DAG.
+* schedule_interval: Defines how frequently the DAG runs (e.g., timedelta(days=1) for daily, or @daily, @hourly, etc.).
+catchup=False: Prevents Airflow from running instances of the DAG for all past missed schedule_intervals up to the start_date. Crucial for new DAGs.
+tags: Helps organize and filter DAGs in the Airflow UI.
+
+#### 5. Define Tasks
+Inside the with dag: block, we define our individual tasks. Each task is an instance of an Operator.
+
+```Python
+start_task = BashOperator(
+    task_id='start_greeting',
+    bash_command='echo "Hello Airflow User! Starting our first DAG."',
+)
+
+print_date_task = BashOperator(
+    task_id='print_current_date',
+    bash_command='echo "Today\'s date is: $(date)"',
+)
+
+end_task = BashOperator(
+    task_id='finish_greeting',
+    bash_command='echo "Our first DAG has finished successfully!"',
+)
+```
+
+* task_id: A unique identifier for the task within this DAG.
+* bash_command: The actual shell command that the BashOperator will execute.
+
+#### 6. Set Task Dependencies
+Finally, we define the order in which our tasks should run. The >> operator means "runs after."
+
+```Python
+start_task >> print_date_task >> end_task
+```
+This line tells Airflow:
+
+start_task runs first.
+print_date_task runs only after start_task completes successfully.
+end_task runs only after print_date_task completes successfully.
+
+### Full DAG Code
+
+```Python
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+with DAG(
+    dag_id='my_first_airflow_dag',
+    start_date=datetime(2023, 1, 1),
+    schedule_interval=timedelta(days=1),
+    catchup=False,
+    default_args=default_args,
+    tags=['hello_world', 'learning'],
+    description='A simple DAG to say hello and print date.'
+) as dag:
+    start_task = BashOperator(
+        task_id='start_greeting',
+        bash_command='echo "Hello Airflow User! Starting our first DAG."',
+    )
+
+    print_date_task = BashOperator(
+        task_id='print_current_date',
+        bash_command='echo "Today\'s date is: $(date)"',
+    )
+
+    end_task = BashOperator(
+        task_id='finish_greeting',
+        bash_command='echo "Our first DAG has finished successfully!"',
+    )
+
+    start_task >> print_date_task >> end_task
+```
+
+**Running Your First DAG in the Airflow UI**
+1. Save the File: Ensure you save my_first_dag.py into your configured Airflow dags folder.
+2. Refresh UI (if needed): The Airflow scheduler will automatically pick up the new DAG. Sometimes a quick refresh of your browser might be needed.
+3. Toggle On: In the Airflow UI, find my_first_airflow_dag in the DAGs list. Toggle the switch to "On" (blue).
+4. Trigger Manually: Click the "Play" button (trigger DAG) next to your DAG.
+
+**Monitor Progress:**
+Navigate to the Graph View or Grid View for your DAG. You'll see the tasks change color as they run (e.g., from scheduled to running to success or failed).
+Green indicates success!
+
+**View Logs:** Click on any completed task (e.g., print_current_date), then select "Logs" from the context menu to see the output of the bash_command.
+
+**Next Steps**
+Congratulations! You've just created and run your very first Apache Airflow DAG. This is the fundamental building block for all your future data pipelines.

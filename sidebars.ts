@@ -41,16 +41,20 @@ const sidebars: SidebarsConfig = {
           type: 'doc',
           label: "Docker Installation",
           id: 'Installation/Docker'
-        },
-        // {
-        //   type: 'doc',
-        //   label: "Windows Installation",
-        //   id: 'Installation/Windows'
-        // }
-      ],
+        },]
+    },
+    {
+      type: 'category',
+      label: 'DAGs',
+      items: [
+        {
+          type: 'doc',
+          label: 'Creating Your First DAG',
+          id: 'Dags/Basics/creating-your-first-dag'
+        }
+      ]
     }
-  ],
-
+  ]
 };
 
 export default sidebars;
