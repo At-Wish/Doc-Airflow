@@ -1,6 +1,6 @@
 ---
 title: Apache Airflow PyPI Installation Guide
-description: Learn how to install Apache Airflow on a Python virtual environment using PyPI, including setup for webserver and scheduler services.
+description: Learn how to install Apache Airflow on a Python virtual environment using PyPI, including setup for api server and scheduler services.
 keywords:
   - apache airflow
   - airflow
@@ -13,9 +13,9 @@ keywords:
   - scheduler
 ---
 
-# PiPy Installation of Apache Airflow on Python Virtual Environment
+# PiPy Installation of Apache Airflow 3.0+ on Python Virtual Environment
 
-In this tutorial you will find steps to install apache airflow on python virtual environment. You can follow the document and watch video which provides more details on the installation. 
+In this tutorial you will find steps to install apache airflow on python virtual environment. You can follow the document and watch video which provides more details on the installation. For [Airflow 2.x](/docs/Installation/PiPy2x) please refer 
 
 ## Tutorial to follow along
 <div class="video-container">
@@ -29,7 +29,7 @@ In this tutorial you will find steps to install apache airflow on python virtual
   ></iframe>
 </div>
 
-## Steps To Install Airflow
+## Steps To Install Airflow 3.0+
 
 Update Ubuntu/Debian
 
@@ -53,25 +53,52 @@ mkdir airflow
 cd airflow
 python3 -m venv airflow_env
 . airflow_env/bin/activate
-pip install --upgrade setuptools pip
+pip install --upgrade setuptools pip flask_appbuilder
 ```
 
 
 Install *Apache Airflow*
 ```bash
-pip install apache-airflow apache-airflow-providers-google
+pip install apache-airflow apache-airflow-providers-fab
 ```
 
 
 Setup environment variable 
 ```bash
-export AIRFLOW_HOME=/app/airflow
+export AIRFLOW_HOME=$(pwd)
 ```
 
 
-Create Airflow Configuration file
+## Update Airflow configuration
+### Create Airflow Configuration file
 ```bash
 airflow config list --defaults > "${AIRFLOW_HOME}/airflow.cfg"
+```
+
+### Update following configurations
+Update executtor to be LocalExecutor as default is sequentialExecutor
+```bash
+executor = LocalExecutor
+```
+
+Also add auth manager if you want to create a user using `airflow users`
+```bash
+auth_manager = airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+```
+
+Create JWT secret key using following 
+```
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+Update JWT secret in config file
+```
+jwt_secret = {YOUR JWT SECRET}
+```
+
+If you want CSRF token enabled generate another JWT token and update config file as follows
+```
+secret_key = {YOUR JWT SECRET}
 ```
 
 
@@ -86,6 +113,7 @@ If you want to use other database then you can also change executor to `LocalExe
 :::
 
 
+## Setting up and testing airflow
 Run following to setup airflow
 ```bash
 airflow db migrate
@@ -97,92 +125,99 @@ airflow users create \
     --role Admin \
     --email contact@shantanukhond.me
 
-
-airflow webserver --port 8080
-
+airflow api-server --port 8080
 ```
 
 
-Now your airflow webserver should be running and accessible on port 8080 Lets create service to run both web server and scheduler (For executor I will write another page to use executors)
+Now your airflow webserver should be running and accessible on port 8080 Lets create service to run all components (For executor I will write another page to use executors)
 
-## Lets create Airflow and scheduler run script 
+## Airflow run script 
 Create Airflow webserver run script using `nano run_airflow.sh`
 Add following code in this
 ```bash
-#bash
-. airflow_env/bin/activate
-export AIRFLOW_HOME=/app/airflow/
-airflow webserver
+#!/bin/bash
+# start_airflow.sh
+# Exit on any error
+set -e
+export AIRFLOW_HOME=/app/airflow
+source /app/airflow/airflow_env/bin/activate
+
+echo "Starting all Airflow components..."
+
+# Start components in the background and store their PIDs
+airflow scheduler &
+PIDS[0]=$!
+
+airflow dag-processor &
+PIDS[1]=$!
+
+airflow triggerer &
+PIDS[2]=$!
+
+airflow api-server --port 8080 &  
+PIDS[3]=$!
+
+# Function to clean up and kill all background processes
+cleanup() {
+    echo "Shutting down all Airflow components..."
+    for PID in ${PIDS[*]}; do
+        kill $PID 2>/dev/null
+    done
+}
+
+# Set a trap to run the cleanup function on script exit (e.g., Ctrl+C)
+trap cleanup EXIT
+
+# Wait for any background process to exit
+wait -n
+
+# Check the exit code of the process that finished
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "A component failed with exit code $EXIT_CODE. Stopping all other components."
+    # The 'trap' will handle the cleanup automatically
+    exit $EXIT_CODE
+else
+    echo "A component finished successfully. Shutting down."
+fi
+
+echo "All Airflow components have been stopped."
 ``` 
 
-Create Airflow scheduler run script using `nano run_scheduler.sh`
-Add following code in this
-```bash
-#bash
-. airflow_env/bin/activate
-export AIRFLOW_HOME=/app/airflow/
-airflow scheduler
-``` 
 
 Add execute permission
 ```
 chmod +x run_airflow.sh
-chmod +x run_scheduler.sh
-
 ``` 
 
-## Finally create services 
+## Create services 
 
 First create airflow web service using following command
-`sudo nano /etc/systemd/system/airflow-webserver.service`
+`sudo nano /etc/systemd/system/airflow.service`
 And add following code in it
+
 ```bash
 [Unit]
 Description = Apache Airflow Webserver Daemon
 After = network.target
 
 [Service]
-PIDFile = /app/airflow/airflow-webserver.PIDFile
-Environment=SUPERSET_HOME=/app/airflow
+PIDFile = /app/airflow/airflow.PIDFile
+Environment=AIRFLOW_HOME=/app/airflow
 Environment=PYTHONPATH=/app/airflow
 WorkingDirectory = /app/airflow
-ExecStart = sh /app/airflow/run_airflow.sh
+ExecStart = bash /app/airflow/run_airflow.sh
 ExecStop = /bin/kill -s TERM $MAINPID
-
 
 [Install]
 WantedBy=multi-user.target
-```
-
-First create airflow web service using following command
-`sudo nano /etc/systemd/system/airflow-scheduler.service`
-Add following code in it
-```bash
-[Unit]
-Description = Apache Airflow scheduler Daemon
-After = network.target
-
-[Service]
-PIDFile = /app/airflow/airflow-scheduler.PIDFile
-Environment=SUPERSET_HOME=/app/airflow
-Environment=PYTHONPATH=/app/airflow
-WorkingDirectory = /app/airflow
-ExecStart = sh /app/airflow/run_scheduler.sh
-ExecStop = /bin/kill -s TERM $MAINPID
-
-
-[Install]
-WantedBy=multi-user.target
-
 ```
 
 Finally lets enable and start service    
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable airflow-webserver.service
-sudo systemctl enable airflow-scheduler.service
-sudo systemctl start airflow-webserver.service
-sudo systemctl start airflow-scheduler.service
+sudo systemctl enable airflow.service
+sudo systemctl start airflow.service
 ```
 
-With these steps, your Apache Airflow webserver and scheduler should now be running as system services. You can access the Airflow UI by navigating to http://localhost:8080 in your web browser.
+With these steps, your Apache Airflow should now be running as system services. You can access the Airflow UI by navigating to http://localhost:8080 in your web browser.
