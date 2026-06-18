@@ -1,0 +1,28 @@
+# Quickstart Apache Airflow in less than 2 minutes
+
+To quickstart the apache airflow on any operating system with docker, I have created a repository [GitHun Learn Airflow](https://github.com/shantanukhond/learn-airflow). 
+
+:::note
+You can run the following commands in a terminal on Mac/Linux or in PowerShell on Windows in the folder you want airflow configs to be placed.
+:::
+
+We will start by cloning this repo
+```shell
+git clone https://github.com/shantanukhond/learn-airflow.git
+cd learn-airflow
+```
+
+Once cloned we will copy `.env.example` to `.env`
+```shell
+cp .env.example .env
+echo "AIRFLOW_UID=$(id -u)" >> .env
+```
+
+You can change default username and password if needed in  `.env` file. Also you can change Version.
+
+Once done we will start with
+```bash
+docker compose up airflow-init
+docker compose up -d
+```
+

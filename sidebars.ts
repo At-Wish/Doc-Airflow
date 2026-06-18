@@ -41,7 +41,24 @@ const sidebars: SidebarsConfig = {
           type: 'doc',
           label: "Docker Installation",
           id: 'Installation/Docker'
-        },]
+        },
+      ]
+    },
+    {
+      type: 'category',
+      label: 'Adding DAGs',
+      items: [
+        {
+          type: 'doc',
+          label: 'Docker',
+          id: 'AddingDags/adding-dags-docker',
+        },
+        {
+          type: 'doc',
+          label: 'ECS',
+          id: 'AddingDags/adding-dags-ecs',
+        },
+      ],
     },
     {
       type: 'category',
