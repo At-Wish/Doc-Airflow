@@ -1,6 +1,33 @@
+---
+title: Apache Airflow Quickstart Guide
+description: Get Apache Airflow 3+ running locally in under 2 minutes using Docker and Docker Compose.
+keywords:
+  - apache airflow
+  - airflow
+  - quickstart
+  - docker
+  - docker compose
+  - setup
+  - guide
+---
+
 # Quickstart Apache Airflow in less than 2 minutes
 
-To quickstart the apache airflow on any operating system with docker, I have created a repository [GitHun Learn Airflow](https://github.com/shantanukhond/learn-airflow). 
+To quickstart apache airflow on any operating system with docker, I have created a repository [GitHub Learn Airflow](https://github.com/shantanukhond/learn-airflow). You can follow the document and watch video which provides more details on the quickstart.
+
+## Tutorial to follow along
+<div class="video-container">
+  <iframe
+    src="https://www.youtube.com/embed/_DphEMwONMI"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+  ></iframe>
+</div>
+
+## Steps to quickstart Airflow
 
 :::note
 You can run the following commands in a terminal on Mac/Linux or in PowerShell on Windows in the folder you want airflow configs to be placed.
@@ -26,3 +53,4 @@ docker compose up airflow-init
 docker compose up -d
 ```
 
+When startup finishes, open the Airflow UI at [http://localhost:8080](http://localhost:8080).
