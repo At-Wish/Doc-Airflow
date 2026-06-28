@@ -25,6 +25,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'doc',
+      label: 'Core Concepts',
+      id: 'CoreConcepts/core-concepts',
+    },
+    {
+      type: 'doc',
       label: "Quickstart",
       id: 'Quickstart'
     },

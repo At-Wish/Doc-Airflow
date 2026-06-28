@@ -1,0 +1,96 @@
+---
+id: core-concepts
+title: Core Concepts
+sidebar_label: Core Concepts
+slug: /core-concepts
+description: Understand the core components and patterns of Apache Airflow — sensors, operators, task groups, XComs, scheduling, and more.
+keywords:
+  - apache airflow
+  - core concepts
+  - sensors
+  - operators
+  - task groups
+  - xcom
+  - scheduling
+tags: [Apache Airflow, Core Concepts]
+---
+
+# Core Concepts 
+
+## Sensors
+As their name suggests they sesne for something to occcur or waiting for an external event.
+Sensor have two different mode to run 
+### Modes
+#### poke
+    - Consumes a whole worker slot and waits and checks again till timeout
+    - **Good** When you need to check frequently such as every 60 seconds. 
+    - In such scenario giving up worker and consuming back every 60 seconds is not worth. 
+#### reschedule
+    - Only consumes worker when needed to check 
+    - **Good** when you have longer wait duration such as every 15 minutes or hour
+    - It rleases worker and consume only when next schedule is 
+
+### Common parameters
+- *Poke Interval:* When to check, for poke it will check and for rechedule it will schedule 
+- *timeout:* maximum time the sensor is allowed to check before failing
+- *mode:* poke/rechedule
+- *soft_fail:* if set to `True` it wont show `FAILED` after timeout it will have status `SKIPPED`
+- *exponential_backoff:* Time increases exponentially after each checks till `max_wait` 
+- *max_wait:* Upper limit of exponential_backoff
+
+Example:
+```py
+BashSensor(
+    task_id="wait_for_file",
+    bash_command="test -f /data/input.csv",
+    poke_interval=60,
+    timeout=60 * 60,
+    mode="reschedule",
+)
+```
+
+## Operators
+Operators are like functions or templates where you plugin your configuration/data and it is done. Airflow has lot of default operators. Some popular operators are
+- BashOperator
+- PythonOperator 
+- HttpOperator
+
+## Executor
+Executor is what actually runs your task. Airflow has multiple predefined executors such as
+- Local Executor
+- Celery Executor
+- Kubernetes Executor
+- ECS Executor
+Airflow also supports multiple executors at once. You can also create a custom executor and run it. If you want to create a executor you need to use `BaseExecutor`
+
+## XComs
+XComs stands for cross-communications are mechanism that allows tasks to talk to each other. 
+
+XComs are like a relative of Variables. Main difference is:
+- XComs are **per task instance** and designed for communication within a DAG run
+- Variables are **global** and designed for overall configuration and sharing values across Airflow
+
+Use XComs when one task needs to pass a small result to another task in the same run. Use Variables when you need a config value that many DAGs or tasks can read.
+
+## PythonOperator / @task (TaskFlow API)
+
+## Task Groups
+
+## Dynamic Task Mapping
+
+
+## Hooks + Connections
+
+## Trigger Rules
+
+## Retries + retry_delay
+
+## SLAs / sla_miss_callback
+
+## Scheduling (cron + catchup)
+
+## Variables & Params
+
+## on_failure_callback
+
+## BranchPythonOperator

@@ -48,6 +48,24 @@ The Airflow scheduler intelligently manages when and how your tasks run, while t
 * **Machine Learning:** Orchestrating the steps in a model's lifecycle, from training to deployment.
 * **Infrastructure Automation:** Scheduling and running operational tasks like system updates or backups.
 
+### Core Components
+
+The [Core Concepts](/docs/core-concepts) guide covers these Airflow patterns and building blocks:
+
+* [Sensors](/docs/core-concepts#sensors)
+* [BranchPythonOperator](/docs/core-concepts#branchpythonoperator)
+* [PythonOperator / @task (TaskFlow API)](/docs/core-concepts#pythonoperator--task-taskflow-api)
+* [Task Groups](/docs/core-concepts#task-groups)
+* [Dynamic Task Mapping](/docs/core-concepts#dynamic-task-mapping)
+* [XComs](/docs/core-concepts#xcoms)
+* [Hooks + Connections](/docs/core-concepts#hooks--connections)
+* [Trigger Rules](/docs/core-concepts#trigger-rules)
+* [Retries + retry_delay](/docs/core-concepts#retries--retry_delay)
+* [SLAs / sla_miss_callback](/docs/core-concepts#slas--sla_miss_callback)
+* [Scheduling (cron + catchup)](/docs/core-concepts#scheduling-cron--catchup)
+* [Variables & Params](/docs/core-concepts#variables--params)
+* [on_failure_callback](/docs/core-concepts#on_failure_callback)
+
 ### Getting Started
 
 To begin using Airflow, you'll generally need:
@@ -60,24 +78,3 @@ To begin using Airflow, you'll generally need:
 1. AWS: Amazon Managed Workflows for Apache Airflow (MWAA)
 2. GCP: Google Cloud Composer
 3. Azure: Workflow Orchestration Manager for Azure Data Factory
-
-<!-- 
----
-
-# Airflow Documentation Index
-
-## 1. Core Concepts
-- [DAG (Directed Acyclic Graph)](/core-concepts#1-dag-directed-acyclic-graph)
-- [Tasks](/core-concepts#2-tasks)
-- [Operators](/core-concepts#3-operators)
-- [Scheduler](/core-concepts#4-scheduler)
-- [Executor](/core-concepts#5-executor)
-- [Airflow UI (Web Interface)](/core-concepts#6-airflow-ui-web-interface)
-- [Sensors](/core-concepts#7-sensors)
-- [Dependencies](/core-concepts#8-dependencies)
-- [Hooks](/core-concepts#9-hooks)
-- [Task Instances](/core-concepts#10-task-instances)
-
-## 2. Installation
-- [Using Pip](/installation/pip)
-- [Using Docker](/installation/docker) -->
